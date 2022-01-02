@@ -1,25 +1,59 @@
-import { FC, useState } from 'react';
+import {
+  FC, RefObject, useEffect, useMemo, useState,
+} from 'react';
 import { Item } from './item';
+import { ItemContent } from './ItemContent';
 import { Container } from './styles';
 
+export interface contentProps {
+	contentRef: (element: any) => any;
+}
+
+const WhyComponent: FC<contentProps> = ({ contentRef }) => (
+  <div
+    ref={contentRef}
+    style={{ height: 120 }}
+  >
+    oi
+  </div>
+);
+const WhyComponent2: FC<contentProps> = ({ contentRef }) => (
+  <div
+    ref={contentRef}
+    style={{ height: 200 }}
+  >
+    oasdi
+  </div>
+);
 interface menuItemType {
 	title: string,
-	hasContent: boolean
+	content: FC<contentProps>
 }
 
 const menuItems: menuItemType[] = [
   {
     title: 'Why Strapi?',
-    hasContent: true,
+    content: WhyComponent,
   },
   {
     title: 'Lorem ipsum',
-    hasContent: false,
+    content: WhyComponent2,
   },
 ];
 
 const Menu: FC = () => {
   const [activeItem, setActiveItem] = useState<null | string>(null);
+  const [isOnItemContent, setisOnItemContentContent] = useState<boolean>(false);
+  const [isOnItemMenu, setIsOnItemMenu] = useState<boolean>(false);
+
+  const activeObject = useMemo(
+    () => menuItems.find((item) => item.title === activeItem),
+    [activeItem],
+  );
+
+  useEffect(() => {
+    if (!isOnItemContent && !isOnItemMenu) setActiveItem(null);
+  }, [isOnItemMenu, isOnItemContent]);
 
   return (
     <Container>
@@ -29,6 +63,8 @@ const Menu: FC = () => {
           <ul>
             {menuItems.map((item) => (
               <Item
+                hasContent={Boolean(item.content)}
+                handleMouseState={setIsOnItemMenu}
                 isActive={item.title === activeItem}
                 key={item.title}
                 handleActive={setActiveItem}
@@ -37,7 +73,22 @@ const Menu: FC = () => {
             ))}
           </ul>
         </nav>
-        <h2 className="right-el">{activeItem}</h2>
+        <div>
+          <h3>
+            isOnItemContent
+            {' '}
+            {JSON.stringify(isOnItemContent)}
+          </h3>
+          <h3>
+            isOnItemMenu
+            {JSON.stringify(isOnItemMenu)}
+          </h3>
+        </div>
+        <ItemContent
+          content={activeObject?.content}
+          isActive={Boolean(activeItem)}
+          handleIsOnItem={setisOnItemContentContent}
+        />
       </div>
     </Container>
   );

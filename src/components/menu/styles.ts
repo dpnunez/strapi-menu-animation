@@ -6,6 +6,7 @@ const Container = styled.header`
 	background-color: white;
 
 	.content {
+		position: relative;
 		margin: auto;
 		height: 100%;
 		width: 100%;
@@ -21,12 +22,17 @@ const Container = styled.header`
 			flex: 1;
 			display: flex;
 			align-items: center;
+			height: 100%;
 		}
 		nav ul {
 			margin: auto;
 			list-style:none;
+			display: flex;
+			height: 100%;
 			li {
-				display: inline;
+				display: flex;
+				align-items: center;
+				height: 100%;
 			}
 		}
 
@@ -57,6 +63,21 @@ const ActiveIndicator = styled(motion.span)`
 	left: 0;
 `;
 
+const ItemContentContainer = styled(motion.div)`
+	width: 100%;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	
+
+	.item-content {
+		padding: 2rem;
+		margin-top: 20px;
+		background: white;
+		border-radius: 20px;
+	}
+`;
+
 export {
-  Container, ItemContainer, ItemText, ActiveIndicator,
+  Container, ItemContainer, ItemText, ActiveIndicator, ItemContentContainer,
 };

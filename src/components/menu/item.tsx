@@ -8,12 +8,13 @@ interface ItemProps {
 	hasContent: boolean,
 	handleActive: Dispatch<SetStateAction<string | null>>
 	isActive: boolean,
+	handleMouseState: Dispatch<SetStateAction<boolean>>
 }
 
 const Item: FC<ItemProps> = ({
-  title, hasContent, handleActive, isActive, ...rest
+  title, hasContent, handleActive, isActive, handleMouseState, ...rest
 }) => {
-  const [textWidth, setTextWidth] = useState<number>(0);
+  const [textWidth, setTextWidth] = useState<number>(10);
   const textRef = useRef<HTMLSpanElement>(null);
   const state = isActive ? 'active' : 'inactive';
 
@@ -28,10 +29,13 @@ const Item: FC<ItemProps> = ({
 
   const indicatorVariants = {
     active: {
-      width: textWidth,
+      x: 0,
+    },
+    false: {
+      x: textWidth,
     },
     inactive: {
-      width: 0,
+      x: textWidth,
     },
   };
 
@@ -41,8 +45,17 @@ const Item: FC<ItemProps> = ({
     if (element) { setTextWidth(element.offsetWidth); }
   }, [textRef]);
 
+  const handleEnter = () => {
+    handleMouseState(true);
+    handleActive(title);
+  };
+
+  const handleLeave = () => {
+    handleMouseState(false);
+  };
+
   return (
-    <ItemContainer {...rest} onMouseEnter={() => handleActive(title)}>
+    <ItemContainer {...rest} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
       <ItemText
         animate={state}
         variants={textVariants}
@@ -51,7 +64,7 @@ const Item: FC<ItemProps> = ({
         {title}
         {hasContent && ' ˅'}
         <ActiveIndicator
-          initial="inactive"
+          initial={false}
           animate={state}
           variants={indicatorVariants}
         />
